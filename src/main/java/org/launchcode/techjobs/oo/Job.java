@@ -1,6 +1,7 @@
 package org.launchcode.techjobs.oo;
 
 import java.util.Objects;
+import java.lang.reflect.Field;
 
 public class Job {
 
@@ -33,6 +34,39 @@ public class Job {
 
     // TODO: Add custom equals and hashCode methods. Consider two Job objects "equal" when their id fields
     //  match.
+
+    @Override
+    public String toString() {
+        String[] labels = {"ID: ", "Name: ", "Employer: ", "Location: ", "Position Type: ", "Core Competency: "};
+        Field[] fields = Job.class.getDeclaredFields();
+        String unavailable = "Data not available";
+        String message = "\n";
+        int index = 0;
+
+        for (Field a : fields) {
+            if (a.getName() == "nextId") {
+            } else {
+                try {
+                    if (a.get(this) instanceof JobField) {
+                        if (((JobField) a.get(this)).getValue() == "") {
+                            message = message + labels[index] + unavailable + "\n";
+                        } else {
+                            message = message + labels[index] + a.get(this) + "\n";
+                        }
+                    } else if (a.get(this) == null || a.get(this) == "") {
+                        message = message + labels[index] + unavailable + "\n";
+                    } else {
+                        message = message + labels[index] + a.get(this) + "\n";
+                    }
+                    index++;
+                } catch (Exception e) {
+                    message = message + labels[index] + unavailable + "\n";
+                    index++;
+                }
+            }
+        }
+        return message;
+    }
 
     @Override
     public boolean equals(Object o) {
